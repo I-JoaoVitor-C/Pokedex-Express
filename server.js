@@ -5,7 +5,7 @@ const path = require('path');
 const app = express();
 const PORT = 3000;
 
-// Servir arquivos esttivos da pasta public
+// Servir arquivos estáticos da pasta public
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Rota da API — busca dados do Pokémon na PokeAPI
@@ -31,9 +31,9 @@ app.get('/api/pokemon/:name', async (req, res) => {
 
     }   catch (error) {
         if (error.response && error.response.status === 404) {
-            res.status(404).json({ error: 'Pokémon não encontrado' });
+            res.status(404).json({ erro: 'Pokémon não encontrado' });
         } else {
-            res.status(500).json({ error: 'Erro ao conectar com a PokeAPI.' });
+            res.status(500).json({ erro: 'Erro ao conectar com a PokeAPI.' });
         }
     }
 
