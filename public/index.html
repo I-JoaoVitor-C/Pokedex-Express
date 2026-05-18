@@ -16,7 +16,9 @@
         <input type="text" id="inputPokemon" placeholder="Ex: pikachu, bulbasaur..."
             onkeydown="if(event.key==='Enter') buscar()" />
         <button onclick="buscar()">Buscar</button>
+        <button onclick="aleatorio()">PokemonAleatório</button>
     </div>
+
 
     <div id="resultado"></div>
 
@@ -35,6 +37,55 @@
             try {
                 // Faz requisição para o servidor Express
                 const resposta = await fetch(`/api/pokemon/${nome}`);
+                const dados = await resposta.json();
+
+                if (!resposta.ok) {
+                    div.innerHTML = `<div class="erro">${dados.erro}</div>`;
+                    return;
+                }
+
+                const tiposHTML = dados.tipos
+                    .map(t => `<span class="tipo ${t}">${t}</span>`)
+                    .join('');
+
+                div.innerHTML = `
+                    <div class="card">
+                        <img src="${dados.imagem}" alt="${dados.nome}" />
+                        <h2>${dados.nome}</h2>
+                        <p class="numero">#${String(dados.id).padStart(3, '0')}</p>
+                        <div class="tipos">${tiposHTML}</div>
+                        <div class='info-grid'>
+                            <div class='info-item'>
+                                <div class='label'>Altura</div>
+                                <div class='value'>${dados.altura}</div>
+                            </div>
+                            <div class='info-item'>
+                                <div class='label'>Peso</div>
+                                <div class='value'>${dados.peso}</div>
+                            </div>
+                        </div>
+                        <div class='habilidades'>
+                            <strong>Habilidades:</strong>
+                            ${dados.habilidades.join(', ')}
+                        </div>
+                    </div>
+                `;
+                
+            } catch (e) {
+                div.innerHTML = 
+                    '<div class="erro">Erro ao conectar com o servidor.</div>';
+            }
+        }
+
+        async function aleatorio() {
+            const id = Math.floor(Math.random() * 1010) + 1; // Gera um ID aleatório entre 1 e 1010
+            const div = document.getElementById('resultado');
+
+            div.innerHTML = '<div class="carregando">Buscando...</div>';
+
+            try {
+                // Faz requisição para o servidor Express
+                const resposta = await fetch(`/api/pokemon/${id}`);
                 const dados = await resposta.json();
 
                 if (!resposta.ok) {
